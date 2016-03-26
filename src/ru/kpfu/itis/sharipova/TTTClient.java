@@ -92,12 +92,11 @@ public class TTTClient {
 
                 while (true) {
                     response = in.readLine();
-                    validMove(response, mark);
-//                    if (response.startsWith("VALID_MOVE")) {
-//                        messageLabel.setText("Valid move, please wait");
-//                        currentButton.setText(mark + "");
-//                        currentButton.setEnabled(false);
-                     if (response.startsWith("OPPONENT_MOVED")) {
+                    if (response.startsWith("VALID_MOVE")) {
+                        messageLabel.setText("Valid move, please wait");
+                        currentButton.setText(mark + "");
+                        currentButton.setEnabled(false);
+                    } else if (response.startsWith("OPPONENT_MOVED")) {
                         int i = Integer.parseInt(response.substring(15, 16));
                         int j = Integer.parseInt(response.substring(17, 18));
                         JButton jButton = getButtonByPosition(j * buttomSize, i * buttomSize);
@@ -124,11 +123,11 @@ public class TTTClient {
             socket.close();
         }
     }
-    private void validMove(String response, String mark){
-        messageLabel.setText("Valid move, please wait");
-        currentButton.setText(mark + "");
-        currentButton.setEnabled(false);
-    }
+//    private void validMove(String response, String mark){
+//        messageLabel.setText("Valid move, please wait");
+//        currentButton.setText(mark + "");
+//        currentButton.setEnabled(false);
+//    }
 
     private boolean wantsToPlayAgain() {
         int response = JOptionPane.showConfirmDialog(frame,

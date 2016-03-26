@@ -15,7 +15,7 @@ public class Server {
         System.out.println("Tic Tac Toe Server is Running");
         try {
             while (true) {
-                TTTGame game = new TTTGame();
+                TTTGame game = (TTTGame) ac.getBean("game");
                 TTTGame.TTTPlayer playerO = game.new TTTPlayer(serverSocket.accept(), 'O');
                 TTTGame.TTTPlayer playerX = game.new TTTPlayer(serverSocket.accept(), 'X');
 

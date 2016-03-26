@@ -1,4 +1,5 @@
 package ru.kpfu.itis.sharipova;
+
 import ru.kpfu.itis.sharipova.interfaces.*;
 
 import java.io.BufferedReader;
@@ -8,32 +9,33 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
- *  Client -> Server           Server -> Client
- *  ----------------           ----------------
- *  MOVE <n>  (0 <= n <= 8)    WELCOME <char>  (char in {X, O})
- *  QUIT                       VALID_MOVE
- *                             OTHER_PLAYER_MOVED <n>
- *                             VICTORY
- *                             DEFEAT
- *                             TIE
- *                             MESSAGE <text>
- *
+ * Client -> Server           Server -> Client
+ * ----------------           ----------------
+ * MOVE <n>  (0 <= n <= 8)    WELCOME <char>  (char in {X, O})
+ * QUIT                       VALID_MOVE
+ * OTHER_PLAYER_MOVED <n>
+ * VICTORY
+ * DEFEAT
+ * TIE
+ * MESSAGE <text>
  */
-class TTTGame extends Module{
+class TTTGame extends Module {
 
-    protected boolean hasWinner(){
+    protected boolean hasWinner() {
 
         return (board[0][0] != null && board[0][0] == board[0][1] && board[0][0] == board[0][2])
-                ||(board[1][0] != null && board[1][0] == board[1][1] && board[1][0] == board[1][2])
-                ||(board[2][0] != null && board[2][0] == board[2][1] && board[2][0] == board[2][2])
-                ||(board[0][0] != null && board[0][0] == board[1][0] && board[0][0] == board[2][0])
-                ||(board[0][1] != null && board[0][1] == board[1][1] && board[0][1] == board[2][1])
-                ||(board[0][2] != null && board[0][2] == board[1][2] && board[0][2] == board[2][2])
-                ||(board[0][0] != null && board[0][0] == board[1][1] && board[0][0] == board[2][2])
-                ||(board[0][2] != null && board[0][2] == board[1][1] && board[0][2] == board[2][0]);
-    };
+                || (board[1][0] != null && board[1][0] == board[1][1] && board[1][0] == board[1][2])
+                || (board[2][0] != null && board[2][0] == board[2][1] && board[2][0] == board[2][2])
+                || (board[0][0] != null && board[0][0] == board[1][0] && board[0][0] == board[2][0])
+                || (board[0][1] != null && board[0][1] == board[1][1] && board[0][1] == board[2][1])
+                || (board[0][2] != null && board[0][2] == board[1][2] && board[0][2] == board[2][2])
+                || (board[0][0] != null && board[0][0] == board[1][1] && board[0][0] == board[2][2])
+                || (board[0][2] != null && board[0][2] == board[1][1] && board[0][2] == board[2][0]);
+    }
 
-    protected synchronized boolean legalMove(int y , int x , Player player){
+    ;
+
+    protected synchronized boolean legalMove(int y, int x, Player player) {
         if (player == currentPlayer && board[y][x] == null) {
             //current player moves
             board[y][x] = currentPlayer;
@@ -43,16 +45,21 @@ class TTTGame extends Module{
             return true;
         }
         return false;
-    };
+    }
+
+    ;
+
     //tied?
-    protected boolean boardFilledUp(){
+    protected boolean boardFilledUp() {
         for (Player[] players : board) {
             for (Player player : players) {
-                if (player==null) return false;
+                if (player == null) return false;
             }
         }
         return true;
-    };
+    }
+
+    ;
 
     public class TTTPlayer extends Player {
 
@@ -70,26 +77,21 @@ class TTTGame extends Module{
             }
         }
 
-        public void setOpponent(Player opponent){
-            this.opponent=opponent;
+        public void setOpponent(Player opponent) {
+            this.opponent = opponent;
         }
-        public void otherPlayerMoved (int i, int j){
-            output.println("OPPONENT_MOVED " + i+" "+ j);
+
+        public void otherPlayerMoved(int i, int j) {
+            output.println("OPPONENT_MOVED " + i + " " + j);
             output.println(
                     hasWinner() ? "DEFEAT" : boardFilledUp() ? "TIE" : "");
         }
 
         public void run() {
+            startGame(output, socket, mark);
+        }
+        public void startGame(PrintWriter output, Socket socket, char mark){
             try {
-                // The thread is only started after everyone connects.
-                output.println("MESSAGE All players connected");
-
-                // Tell the first player that it is her turn.
-                if (mark == 'X') {
-                    output.println("MESSAGE Your move");
-                }
-
-                // Repeatedly get commands from the client and process them.
                 while (true) {
                     String command = input.readLine();
                     if (command.startsWith("MOVE")) {
@@ -109,8 +111,6 @@ class TTTGame extends Module{
                 }
             } catch (IOException e) {
                 System.out.println("Player died: " + e);
-            } finally {
-                try {socket.close();} catch (IOException e) {}
             }
         }
 

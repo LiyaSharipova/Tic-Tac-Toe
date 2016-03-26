@@ -83,8 +83,8 @@ public class TTTClient {
         String response;
         String mark;
         String opponentMark;
+        response = in.readLine();
         try {
-            response = in.readLine();
             if (response.startsWith("WELCOME")) {
                 mark = response.charAt(8) + "";
                 opponentMark = (mark.equals("X")) ? "O" : "X";
@@ -92,11 +92,12 @@ public class TTTClient {
 
                 while (true) {
                     response = in.readLine();
-                    if (response.startsWith("VALID_MOVE")) {
-                        messageLabel.setText("Valid move, please wait");
-                        currentButton.setText(mark + "");
-                        currentButton.setEnabled(false);
-                    } else if (response.startsWith("OPPONENT_MOVED")) {
+                    validMove(response, mark);
+//                    if (response.startsWith("VALID_MOVE")) {
+//                        messageLabel.setText("Valid move, please wait");
+//                        currentButton.setText(mark + "");
+//                        currentButton.setEnabled(false);
+                     if (response.startsWith("OPPONENT_MOVED")) {
                         int i = Integer.parseInt(response.substring(15, 16));
                         int j = Integer.parseInt(response.substring(17, 18));
                         JButton jButton = getButtonByPosition(j * buttomSize, i * buttomSize);
@@ -122,6 +123,11 @@ public class TTTClient {
         } finally {
             socket.close();
         }
+    }
+    private void validMove(String response, String mark){
+        messageLabel.setText("Valid move, please wait");
+        currentButton.setText(mark + "");
+        currentButton.setEnabled(false);
     }
 
     private boolean wantsToPlayAgain() {
